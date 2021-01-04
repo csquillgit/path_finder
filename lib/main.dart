@@ -114,6 +114,7 @@ class _MyHomePageState extends State<MyHomePage> {
         tooltip: 'Increment',
         child: Icon(Icons.add),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -130,7 +131,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
         //currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
+        selectedItemColor: Colors.greenAccent[800],
         //onTap: _onItemTapped,
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
