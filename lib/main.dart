@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.green,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(title: 'Pathfinder'),
+      home: MyPage(title: 'Pathfinder'),
     );
   }
 }
@@ -29,11 +29,43 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
+class MyListPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            print("List Route");
+          },
+          child: Text('Test'),
+        ),
+      ),
+    );
+  }
+}
+
+class MyMapPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            print("Map Route");
+          },
+          child: Text('Test'),
+        ),
+      ),
+    );
+  }
+}
+
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
-  var _lat;
-  var _lon;
-  var _alt;
+  var _lat = .0;
+  var _lon = .0;
+  var _alt = .0;
 
   void _incrementCounter() {
     setState(() {
@@ -41,8 +73,8 @@ class _MyHomePageState extends State<MyHomePage> {
       Future<Position> position = _determinePosition();
       position.then((value) => {
             _lat = value.latitude.toDouble(),
-            _lon = value.longitude,
-            _alt = value.altitude
+            _lon = value.longitude.toDouble(),
+            _alt = value.altitude.toDouble(),
           });
     });
   }
@@ -77,9 +109,9 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
+      // appBar: AppBar(
+      //   title: Text(widget.title),
+      // ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -115,7 +147,33 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Icon(Icons.add),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+    );
+  }
+}
+
+class MyPage extends StatefulWidget {
+  MyPage({Key key, this.title}) : super(key: key);
+
+  final String title;
+
+  @override
+  _MyPageState createState() => _MyPageState();
+}
+
+class _MyPageState extends State<MyPage> {
+  int _currentIndex = 0;
+  final List<Widget> _children = [MyHomePage(), MyListPage(), MyMapPage()];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.title),
+      ),
+      body: _children[_currentIndex], // new
       bottomNavigationBar: BottomNavigationBar(
+        onTap: onTabTapped,
+        currentIndex: _currentIndex,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -130,10 +188,14 @@ class _MyHomePageState extends State<MyHomePage> {
             label: 'Map',
           ),
         ],
-        //currentIndex: _selectedIndex,
         selectedItemColor: Colors.greenAccent[800],
-        //onTap: _onItemTapped,
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ),
     );
+  }
+
+  void onTabTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
   }
 }
