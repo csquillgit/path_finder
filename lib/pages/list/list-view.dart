@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:localstorage/localstorage.dart';
+import 'package:path_finder/pages/action/storage-service.dart';
+import 'package:path_finder/pages/model/location.dart';
 
 class MyListPage extends StatefulWidget {
   MyListPage({Key key}) : super(key: key);
@@ -9,68 +10,52 @@ class MyListPage extends StatefulWidget {
   _MyHomePageState createState() => new _MyHomePageState();
 }
 
-class TodoItem {
-  String title;
-  bool done;
+// class TodoList {
+//   List<TodoItem> items;
 
-  TodoItem({this.title, this.done});
+//   TodoList() {
+//     items = new List();
+//   }
 
-  toJSONEncodable() {
-    Map<String, dynamic> m = new Map();
-
-    m['title'] = title;
-    m['done'] = done;
-
-    return m;
-  }
-}
-
-class TodoList {
-  List<TodoItem> items;
-
-  TodoList() {
-    items = new List();
-  }
-
-  toJSONEncodable() {
-    return items.map((item) {
-      return item.toJSONEncodable();
-    }).toList();
-  }
-}
+//   toJSONEncodable() {
+//     return items.map((item) {
+//       return item.toJSONEncodable();
+//     }).toList();
+//   }
+// }
 
 class _MyHomePageState extends State<MyListPage> {
-  final TodoList list = new TodoList();
-  final LocalStorage storage = new LocalStorage('todo_app');
+  //final TodoList list = new TodoList();
+  final StorageService storage = StorageService();
   bool initialized = false;
   TextEditingController controller = new TextEditingController();
 
   _toggleItem(TodoItem item) {
     setState(() {
       item.done = !item.done;
-      _saveToStorage();
+      //_saveToStorage();
     });
   }
 
   _addItem(String title) {
     setState(() {
       final item = new TodoItem(title: title, done: false);
-      list.items.add(item);
-      _saveToStorage();
+      //list.items.add(item);
+      //_saveToStorage();
     });
   }
 
-  _saveToStorage() {
-    storage.setItem('todos', list.toJSONEncodable());
-  }
+  // _saveToStorage() {
+  //   storage.saveToStorage('todos', list.toJSONEncodable());
+  // }
 
-  _clearStorage() async {
-    await storage.clear();
+  // _clearStorage() async {
+  //   await storage.clearStorage();
 
-    setState(() {
-      list.items = storage.getItem('todos') ?? [];
-    });
-  }
+  //   setState(() {
+  //     list.items = storage.getItem('todos') ?? [];
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +64,7 @@ class _MyHomePageState extends State<MyListPage> {
           padding: EdgeInsets.all(10.0),
           constraints: BoxConstraints.expand(),
           child: FutureBuilder(
-            future: storage.ready,
+            //future: storage.ready(),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.data == null) {
                 return Center(
@@ -88,42 +73,42 @@ class _MyHomePageState extends State<MyListPage> {
               }
 
               if (!initialized) {
-                var items = storage.getItem('todos');
+                //var items = storage.getItem('todos');
 
-                if (items != null) {
-                  list.items = List<TodoItem>.from(
-                    (items as List).map(
-                      (item) => TodoItem(
-                        title: item['title'],
-                        done: item['done'],
-                      ),
-                    ),
-                  );
-                }
+                //if (items != null) {
+                // list.items = List<TodoItem>.from(
+                //   (items as List).map(
+                //     (item) => TodoItem(
+                //       title: item['title'],
+                //       done: item['done'],
+                //     ),
+                //   ),
+                // );
+                //}
 
                 initialized = true;
               }
 
-              List<Widget> widgets = list.items.map((item) {
-                return CheckboxListTile(
-                  value: item.done,
-                  title: Text(item.title),
-                  selected: item.done,
-                  onChanged: (bool selected) {
-                    _toggleItem(item);
-                  },
-                );
-              }).toList();
+              // List<Widget> widgets = list.items.map((item) {
+              //   return CheckboxListTile(
+              //     value: item.done,
+              //     title: Text(item.title),
+              //     selected: item.done,
+              //     onChanged: (bool selected) {
+              //       _toggleItem(item);
+              //     },
+              //   );
+              // }).toList();
 
               return Column(
                 children: <Widget>[
-                  Expanded(
-                    flex: 1,
-                    child: ListView(
-                      children: widgets,
-                      itemExtent: 50.0,
-                    ),
-                  ),
+                  // Expanded(
+                  //   flex: 1,
+                  //   // child: ListView(
+                  //   //   children: widgets,
+                  //   //   itemExtent: 50.0,
+                  //   // ),
+                  // ),
                   ListTile(
                     title: TextField(
                       controller: controller,
@@ -142,7 +127,7 @@ class _MyHomePageState extends State<MyListPage> {
                         ),
                         IconButton(
                           icon: Icon(Icons.delete),
-                          onPressed: _clearStorage,
+                          //onPressed: _clearStorage,
                           tooltip: 'Clear storage',
                         )
                       ],

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:path_finder/pages/action/storage-service.dart';
+import 'package:path_finder/pages/model/location.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
@@ -16,6 +18,8 @@ class _MyHomePageState extends State<MyHomePage> {
   var _lon = .0;
   var _alt = .0;
 
+  final StorageService storage = StorageService();
+
   void _incrementCounter() {
     setState(() {
       _counter++;
@@ -26,8 +30,13 @@ class _MyHomePageState extends State<MyHomePage> {
             _alt = value.altitude.toDouble(),
             print("_lat:" + _lat.toString()),
             print("_lon:" + _lon.toString()),
+            _saveToStorage(new TodoItem(title: _lat.toString(), done: false)),
           });
     });
+  }
+
+  _saveToStorage(TodoItem location) {
+    // storage.save(location);
   }
 
   Future<Position> _determinePosition() async {
@@ -41,16 +50,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.deniedForever) {
-      return Future.error(
-          'Location permissions are permantly denied, we cannot request permissions.');
+      return Future.error('Location permissions are permantly denied, we cannot request permissions.');
     }
 
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
-      if (permission != LocationPermission.whileInUse &&
-          permission != LocationPermission.always) {
-        return Future.error(
-            'Location permissions are denied (actual value: $permission).');
+      if (permission != LocationPermission.whileInUse && permission != LocationPermission.always) {
+        return Future.error('Location permissions are denied (actual value: $permission).');
       }
     }
 
