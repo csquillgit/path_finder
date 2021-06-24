@@ -1,8 +1,8 @@
-class TodoItem {
+class Location {
   String title;
   bool done;
 
-  TodoItem({this.title, this.done});
+  Location({this.title, this.done});
 
   toJSONEncodable() {
     Map<String, dynamic> m = new Map();

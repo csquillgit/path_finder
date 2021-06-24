@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:path_finder/main.dart';
 import 'package:path_finder/pages/action/storage-service.dart';
 import 'package:path_finder/pages/model/location.dart';
 
@@ -26,11 +27,15 @@ class MyListPage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyListPage> {
   //final TodoList list = new TodoList();
-  final StorageService storage = StorageService();
+  final StorageService storageService = getIt.get<StorageService>();
   bool initialized = false;
   TextEditingController controller = new TextEditingController();
 
-  _toggleItem(TodoItem item) {
+  _MyHomePageState() {
+    print("created");
+  }
+
+  _toggleItem(Location item) {
     setState(() {
       item.done = !item.done;
       //_saveToStorage();
@@ -39,7 +44,7 @@ class _MyHomePageState extends State<MyListPage> {
 
   _addItem(String title) {
     setState(() {
-      final item = new TodoItem(title: title, done: false);
+      final item = new Location(title: title, done: false);
       //list.items.add(item);
       //_saveToStorage();
     });
@@ -61,83 +66,30 @@ class _MyHomePageState extends State<MyListPage> {
   Widget build(BuildContext context) {
     return new Scaffold(
       body: Container(
-          padding: EdgeInsets.all(10.0),
-          constraints: BoxConstraints.expand(),
-          child: FutureBuilder(
-            //future: storage.ready(),
-            builder: (BuildContext context, AsyncSnapshot snapshot) {
-              if (snapshot.data == null) {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-
-              if (!initialized) {
-                //var items = storage.getItem('todos');
-
-                //if (items != null) {
-                // list.items = List<TodoItem>.from(
-                //   (items as List).map(
-                //     (item) => TodoItem(
-                //       title: item['title'],
-                //       done: item['done'],
-                //     ),
-                //   ),
-                // );
-                //}
-
-                initialized = true;
-              }
-
-              // List<Widget> widgets = list.items.map((item) {
-              //   return CheckboxListTile(
-              //     value: item.done,
-              //     title: Text(item.title),
-              //     selected: item.done,
-              //     onChanged: (bool selected) {
-              //       _toggleItem(item);
-              //     },
-              //   );
-              // }).toList();
-
-              return Column(
-                children: <Widget>[
-                  // Expanded(
-                  //   flex: 1,
-                  //   // child: ListView(
-                  //   //   children: widgets,
-                  //   //   itemExtent: 50.0,
-                  //   // ),
-                  // ),
-                  ListTile(
-                    title: TextField(
-                      controller: controller,
-                      decoration: InputDecoration(
-                        labelText: 'What to do?',
-                      ),
-                      onEditingComplete: _save,
-                    ),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        IconButton(
-                          icon: Icon(Icons.save),
-                          onPressed: _save,
-                          tooltip: 'Save',
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.delete),
-                          //onPressed: _clearStorage,
-                          tooltip: 'Clear storage',
-                        )
-                      ],
-                    ),
-                  ),
-                ],
-              );
-            },
-          )),
+        padding: EdgeInsets.all(10.0),
+        constraints: BoxConstraints.expand(),
+        child: ListView(
+          padding: const EdgeInsets.all(8),
+          children: _items(),
+        ),
+      ),
     );
+  }
+
+  List<Widget> _items() {
+    List<Widget> items = [];
+    List<Location> locs = storageService.getLocations();
+    print(locs.length);
+    locs.forEach((Location loc) {
+      items.add(
+        Container(
+          height: 50,
+          color: Colors.green,
+          child: Center(child: Text(loc.title)),
+        ),
+      );
+    });
+    return items;
   }
 
   void _save() {

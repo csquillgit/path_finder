@@ -1,10 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:path_finder/pages/action/storage-service.dart';
 import 'package:path_finder/pages/home/home-view.dart';
 import 'package:path_finder/pages/list/list-view.dart';
 import 'package:path_finder/pages/map/map-view.dart';
+import 'package:get_it/get_it.dart';
+
+GetIt getIt = GetIt.instance;
 
 void main() {
+  _services();
   runApp(MyApp());
+}
+
+void _services() {
+  getIt.registerLazySingleton(() => StorageService());
 }
 
 class MyApp extends StatelessWidget {

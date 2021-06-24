@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:path_finder/main.dart';
 import 'package:path_finder/pages/action/storage-service.dart';
 import 'package:path_finder/pages/model/location.dart';
 
@@ -18,7 +19,7 @@ class _MyHomePageState extends State<MyHomePage> {
   var _lon = .0;
   var _alt = .0;
 
-  final StorageService storage = StorageService();
+  final StorageService storageService = getIt.get<StorageService>();
 
   void _incrementCounter() {
     setState(() {
@@ -30,13 +31,15 @@ class _MyHomePageState extends State<MyHomePage> {
             _alt = value.altitude.toDouble(),
             print("_lat:" + _lat.toString()),
             print("_lon:" + _lon.toString()),
-            _saveToStorage(new TodoItem(title: _lat.toString(), done: false)),
+            _saveToStorage(new Location(title: _lat.toString(), done: false)),
           });
     });
   }
 
-  _saveToStorage(TodoItem location) {
-    // storage.save(location);
+  _saveToStorage(Location location) {
+    setState(() {
+      storageService.saveLocation(location);
+    });
   }
 
   Future<Position> _determinePosition() async {
