@@ -1,15 +1,24 @@
 class Location {
   String title;
-  bool done;
+  String lat;
+  String lon;
+  String alt;
 
-  Location({this.title, this.done});
+  Location({this.lat, this.lon, this.alt, this.title});
 
   toJSONEncodable() {
     Map<String, dynamic> m = new Map();
 
     m['title'] = title;
-    m['done'] = done;
+    m['lat'] = lat;
+    m['lon'] = lon;
+    m['alt'] = alt;
 
     return m;
+  }
+
+  @override
+  String toString() {
+    return lat + ':' + lon;
   }
 }

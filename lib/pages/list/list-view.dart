@@ -35,20 +35,20 @@ class _MyHomePageState extends State<MyListPage> {
     print("created");
   }
 
-  _toggleItem(Location item) {
-    setState(() {
-      item.done = !item.done;
-      //_saveToStorage();
-    });
-  }
+  // _toggleItem(Location item) {
+  //   setState(() {
+  //     item.done = !item.done;
+  //     //_saveToStorage();
+  //   });
+  // }
 
-  _addItem(String title) {
-    setState(() {
-      final item = new Location(title: title, done: false);
-      //list.items.add(item);
-      //_saveToStorage();
-    });
-  }
+  // _addItem(String title) {
+  //   setState(() {
+  //     final item = new Location(title: title, done: false);
+  //     //list.items.add(item);
+  //     //_saveToStorage();
+  //   });
+  // }
 
   // _saveToStorage() {
   //   storage.saveToStorage('todos', list.toJSONEncodable());
@@ -68,32 +68,56 @@ class _MyHomePageState extends State<MyListPage> {
       body: Container(
         padding: EdgeInsets.all(10.0),
         constraints: BoxConstraints.expand(),
-        child: ListView(
-          padding: const EdgeInsets.all(8),
-          children: _items(),
-        ),
+        child: _buildListView(),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _deleteAll,
+        tooltip: 'Delete All',
+        child: Icon(Icons.delete),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
     );
   }
 
-  List<Widget> _items() {
-    List<Widget> items = [];
+  ListView _buildListView() {
     List<Location> locs = storageService.getLocations();
-    print(locs.length);
-    locs.forEach((Location loc) {
-      items.add(
-        Container(
-          height: 50,
-          color: Colors.green,
-          child: Center(child: Text(loc.title)),
-        ),
-      );
-    });
-    return items;
+    return ListView.builder(
+      itemCount: locs.length,
+      itemBuilder: (context, index) {
+        final item = locs[index];
+        return Dismissible(
+          // Each Dismissible must contain a Key. Keys allow Flutter to
+          // uniquely identify widgets.
+          key: UniqueKey(),
+          // Provide a function that tells the app
+          // what to do after an item has been swiped away.
+          onDismissed: (direction) {
+            //storageService.removeLocation(locs[index]);
+            // Remove the item from the data source.
+            setState(() {
+              locs.removeAt(index);
+            });
+            // Then show a snackbar.
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                backgroundColor: Colors.green,
+                duration: Duration(milliseconds: 500),
+                content: Text(item.toString() + ' dismissed')));
+          },
+          // Show a red background as the item is swiped away.
+          background: Container(color: Colors.red),
+          child: ListTile(title: Text(item.toString() + ':' + index.toString())),
+        );
+      },
+    );
   }
 
-  void _save() {
-    _addItem(controller.value.text);
-    controller.clear();
+  void _deleteAll() {
+    setState(() {
+      storageService.deleteAll();
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          backgroundColor: Colors.green,
+          duration: Duration(milliseconds: 500),
+          content: Text('Deleted all locations')));
+    });
   }
 }

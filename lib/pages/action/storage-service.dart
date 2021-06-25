@@ -4,16 +4,20 @@ import 'package:path_finder/pages/model/location.dart';
 class StorageService {
   List<Location> locs = [];
 
-  saveLocation(Location item) {
-    print("Added Location");
-    Location x = Location();
-    x.title = item.title;
+  addLocation(Location item) {
+    locs.add(item);
+  }
 
-    locs.add(x);
+  removeLocation(Location loc) {
+    return locs.remove(loc);
   }
 
   getLocations() {
     return locs;
+  }
+
+  deleteAll() {
+    locs.clear();
   }
 
 //   final LocalStorage _storage = new LocalStorage('todo_app');

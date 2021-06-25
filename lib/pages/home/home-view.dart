@@ -29,17 +29,23 @@ class _MyHomePageState extends State<MyHomePage> {
             _lat = value.latitude.toDouble(),
             _lon = value.longitude.toDouble(),
             _alt = value.altitude.toDouble(),
-            print("_lat:" + _lat.toString()),
-            print("_lon:" + _lon.toString()),
-            _saveToStorage(new Location(title: _lat.toString(), done: false)),
+            _saveToStorage(Location(lat: _lat.toString(), lon: _lon.toString(), alt: _alt.toString(), title: 'test')),
           });
     });
   }
 
   _saveToStorage(Location location) {
+    print('_lat-l:' + location.lat);
+    print('_lon-l:' + location.lon);
+    print('_alt-l:' + location.alt);
     setState(() {
-      storageService.saveLocation(location);
+      storageService.addLocation(location);
     });
+    // Then show a snackbar.
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        backgroundColor: Colors.green,
+        duration: Duration(milliseconds: 500),
+        content: Text(location.toString() + ' added')));
   }
 
   Future<Position> _determinePosition() async {
