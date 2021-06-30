@@ -11,20 +11,6 @@ class MyListPage extends StatefulWidget {
   _MyHomePageState createState() => new _MyHomePageState();
 }
 
-// class TodoList {
-//   List<TodoItem> items;
-
-//   TodoList() {
-//     items = new List();
-//   }
-
-//   toJSONEncodable() {
-//     return items.map((item) {
-//       return item.toJSONEncodable();
-//     }).toList();
-//   }
-// }
-
 class _MyHomePageState extends State<MyListPage> {
   //final TodoList list = new TodoList();
   final StorageService storageService = getIt.get<StorageService>();
@@ -104,8 +90,35 @@ class _MyHomePageState extends State<MyListPage> {
                 content: Text(item.toString() + ' dismissed')));
           },
           // Show a red background as the item is swiped away.
-          background: Container(color: Colors.red),
-          child: ListTile(title: Text(item.toString() + ':' + index.toString())),
+          background: Container(child: Text("Deleting"), color: Colors.red),
+          child: Card(
+              child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              ListTile(
+                leading: Icon(Icons.album),
+                title: Text(index.toString()),
+                subtitle: Text(item.toString()),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  TextButton(
+                    child: const Text('SEND LOCATION'),
+                    onPressed: () {/* ... */},
+                  ),
+                  const SizedBox(width: 8),
+                  TextButton(
+                    child: const Text('REMOVE'),
+                    onPressed: () {
+                      _delete(index);
+                    },
+                  ),
+                  const SizedBox(width: 8),
+                ],
+              ),
+            ],
+          )),
         );
       },
     );
@@ -118,6 +131,15 @@ class _MyHomePageState extends State<MyListPage> {
           backgroundColor: Colors.green,
           duration: Duration(milliseconds: 500),
           content: Text('Deleted all locations')));
+    });
+  }
+
+  void _delete(int index) {
+    List<Location> locs = storageService.getLocations();
+    setState(() {
+      locs.removeAt(index);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          backgroundColor: Colors.green, duration: Duration(milliseconds: 500), content: Text('Deleted location')));
     });
   }
 }
